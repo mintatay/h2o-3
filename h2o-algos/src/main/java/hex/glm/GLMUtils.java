@@ -49,7 +49,7 @@ public class GLMUtils {
       }
     }
   }
-
+  
   // Note that gradient is [ncoeff][nclass].
   public static void updateGradGamMultinomial(double[][] gradient, double[][][] penaltyMat, int[][] gamBetaIndices,
                                               double[][] beta) {

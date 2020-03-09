@@ -83,7 +83,7 @@ public class GamTestPiping extends TestUtil {
       Scope.exit();
     }
   }
-
+  
   // This test is very similar to test1GamTransform except in this case, I provide the knots in a frame.  
   @Test
   public void testKnotsFromFrame() {
@@ -151,7 +151,7 @@ public class GamTestPiping extends TestUtil {
       GAMModel model = getModel(gaussian,
               Scope.track(parse_test_file("smalldata/glm_test/multinomial_10_classes_10_cols_10000_Rows_train.csv"))
               , "C11", gamCols, ignoredCols, new int[]{5, 5, 5}, new int[]{0,0,0},
-              false, true, null, new double[]{1, 1, 1}, new double[]{0, 0, 0}, 
+              false, true, null, new double[]{1, 1, 1}, new double[]{0, 0, 0},
               new double[]{0, 0, 0}, false, null);
       Scope.track_generic(model);
       double[][][] rBinvD = new double[][][]{{{1.5605080,
@@ -204,7 +204,7 @@ public class GamTestPiping extends TestUtil {
   
   public GAMModel getModel(GLMModel.GLMParameters.Family family, Frame train, String responseColumn,
                            String[] gamCols, String[] ignoredCols, int[] numKnots, int[] bstypes, boolean saveZmat,
-                           boolean savePenalty, double[][] knots, double[] scale, double[] alpha, double[] lambda, 
+                           boolean savePenalty, double[][] knots, double[] scale, double[] alpha, double[] lambda,
                            boolean standardize, String[] knotsKey) {
     GAMModel gam = null;
     try {

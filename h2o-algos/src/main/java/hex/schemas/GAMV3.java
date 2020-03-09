@@ -75,6 +75,7 @@ public class GAMV3 extends ModelBuilderSchema<GAM, GAMV3, GAMV3.GAMParametersV3>
             "bs", // array, name of basis functions used
             "scale", // array, smoothing parameter for GAM,
             "saveZMatrix",
+            "savePenaltyMat",
             "saveGamCols"
     };
 
@@ -225,7 +226,7 @@ public class GAMV3 extends ModelBuilderSchema<GAM, GAMV3, GAMV3.GAMParametersV3>
 
     @API(help = "Predictor column names for gam", required = true, level = Level.critical, gridable = true)
     public String[] gam_X;
-
+    
 /*    @API(help = "Location of knots for each column specified in gam_X.  If null, it will be initialized with " +
             "uniform quantiles.", required = true, level = Level.critical, gridable = true)
     public double[][] knots;*/
@@ -239,6 +240,9 @@ public class GAMV3 extends ModelBuilderSchema<GAM, GAMV3, GAMV3.GAMParametersV3>
 
     @API(help="Save Ztranspose used to centering", level = Level.secondary, direction = Direction.INPUT)
     public boolean saveZMatrix; // save Ztranspose
+
+    @API(help="Save penalty matrix", level = Level.secondary, direction = Direction.INPUT)
+    public boolean savePenaltyMat;
 
     @API(help="Save keys of model matrix", level = Level.secondary, direction = Direction.INPUT)
     public boolean saveGamCols; // if true will save keys storing GAM columns
