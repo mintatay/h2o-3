@@ -242,7 +242,7 @@ public class GAMV3 extends ModelBuilderSchema<GAM, GAMV3, GAMV3.GAMParametersV3>
 
     @API(help="Save keys of model matrix", level = Level.secondary, direction = Direction.INPUT)
     public boolean saveGamCols; // if true will save keys storing GAM columns
-
+    
     @API(help="String arrays storing frame keys of knots.  One for each gam column specified in gam_X", 
             level = Level.secondary, direction = Direction.INPUT)
     public String[] knots_keys;
