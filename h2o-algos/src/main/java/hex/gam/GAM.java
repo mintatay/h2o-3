@@ -96,25 +96,12 @@ public class GAM extends ModelBuilder<GAMModel, GAMModel.GAMParameters, GAMModel
           cindex++;
         }
       }
-      if (_parms._k.length != _parms._gam_X.length)
+      if ((_parms._k != null) && (_parms._k.length != _parms._gam_X.length))
         error("gam colum number","Number of gam columns implied from _k and _gam_X do not match.");
-      if (_parms._gam_X.length != _parms._bs.length)
+      if ((_parms._bs != null) && (_parms._gam_X.length != _parms._bs.length))
         error("gam colum number","Number of gam columns implied from _bs and _gam_X do not match.");
-/*      if (_parms._knots != null) {
-        int numGamCols = _parms._k.length;
-        if (numGamCols != _parms._knots.length)
-          error("gam colum number","Number of gam columns implied from _k and _knots do not match.");
-        for (int cind=0; cind<numGamCols; cind++) {
-          if (_parms._k[cind] != _parms._knots[cind].length)
-            error("knots number", "Number of knots specified in _knots does not match the number of" +
-                    " knots specified in _k");
-          double[] knotDiff = ArrayUtils.eleDiff(_parms._knots[cind]);
-          if (ArrayUtils.minValue(knotDiff) < 0)
-            error("knots", "_knots must be sorted in increasing order");
-          if (_parms._k[cind] < 2)
-            error("number of knots", "number of knots per column should exceed 1");
-        }
-      }*/
+      if (_parms._bs == null) 
+        _parms._bs = new int[_parms._gam_X.length];
       if (_parms._knots_keys!=null)
         if (_parms._knots_keys.length != _parms._gam_X.length)
           error("gam colum number","Number of gam columns implied from _k and _knots_keys do not" +
@@ -124,7 +111,7 @@ public class GAM extends ModelBuilder<GAMModel, GAMModel.GAMParameters, GAMModel
                 " Gam columns in _gamX exceeds 2");
       if ((_parms._lambda_search || !_parms._intercept || _parms._lambda == null || _parms._lambda[0] > 0))
         _parms._use_all_factor_levels = true;
-      if (_parms._link.equals(GLMParameters.Link.family_default))
+      if (_parms._link == null || _parms._link.equals(GLMParameters.Link.family_default))
         _parms._link = _parms._family.defaultLink;
       switch (_parms._family) {
         case gaussian: break;
@@ -136,6 +123,7 @@ public class GAM extends ModelBuilder<GAMModel, GAMModel.GAMParameters, GAMModel
         case tweedie: break;
         case ordinal: break;
         case negativebinomial: break;
+        default: error("family", _parms._family.toString()+" is not supported.");
       }
     }
   }
