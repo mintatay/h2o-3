@@ -175,7 +175,7 @@ public class XGBoostScoreTask extends MRTask<XGBoostScoreTask> {
             }
 
             // Initialize Booster
-            booster = sharedmodel.deserializeBooster();
+            booster = BoosterHelper.loadModel(sharedmodel._boosterBytes);
             booster.setParams(boosterParms.get());
             int treeLimit = 0;
             if (parms._booster == XGBoostModel.XGBoostParameters.Booster.dart) {

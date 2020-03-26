@@ -269,8 +269,8 @@ public class XGBoostModel extends Model<XGBoostModel, XGBoostModel.XGBoostParame
       return XGBoostParameters.Backend.cpu;
     }
   }
-
-  public static BoosterParms createParams(XGBoostParameters p, int nClasses, String[] coefNames) {
+  
+  public static Map<String, Object> createParamsMap(XGBoostParameters p, int nClasses, String[] coefNames) {
     Map<String, Object> params = new HashMap<>();
 
     // Common parameters with H2O GBM
@@ -448,8 +448,11 @@ public class XGBoostModel extends Model<XGBoostModel, XGBoostModel.XGBoostParame
       Log.info(" " + s.getKey() + " = " + s.getValue());
     }
     Log.info("");
+    return Collections.unmodifiableMap(params);
+  }
 
-    return BoosterParms.fromMap(Collections.unmodifiableMap(params));
+  public static BoosterParms createParams(XGBoostParameters p, int nClasses, String[] coefNames) {
+    return BoosterParms.fromMap(createParamsMap(p, nClasses, coefNames));
   }
 
   /** Performs deep clone of given model.  */
@@ -543,7 +546,7 @@ public class XGBoostModel extends Model<XGBoostModel, XGBoostModel.XGBoostParame
     final double threshold = defaultThreshold();
     Booster booster = null;
     try {
-      booster = model_info.deserializeBooster();
+      booster = BoosterHelper.loadModel(model_info._boosterBytes);
       return XGBoostNativePredict.score0(data, offset, preds, _parms._booster.toString(), _parms._ntrees,
               booster, di._nums, di._cats, di._catOffsets, di._useAllFactorLevels,
               _output.nclasses(), _output._priorClassDist, threshold, _output._sparse, _output.hasOffset());
