@@ -43,7 +43,7 @@ public final class AutoML extends Lockable<AutoML> implements TimedH2ORunnable {
   public static final String keySeparator = "@@";
 
   private final static boolean verifyImmutability = true; // check that trainingFrame hasn't been messed with
-  private final static SimpleDateFormat timestampFormatForKeys = new SimpleDateFormat("yyyyMMdd_HHmmss");
+  private final static ThreadLocal<SimpleDateFormat> timestampFormatForKeys = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyyMMdd_HHmmss"));
 
   private static StepDefinition[] defaultModelingPlan = {
           new StepDefinition(Algo.XGBoost.name(), Alias.defaults),
@@ -116,8 +116,8 @@ public final class AutoML extends Lockable<AutoML> implements TimedH2ORunnable {
     if (aml._job == null || !aml._job.isRunning()) {
       H2OJob<AutoML> j = new H2OJob<>(aml, aml._key, aml._runCountdown.remainingTime());
       aml._job = j._job;
-      aml.eventLog().info(Stage.Workflow, "AutoML job created: " + EventLogEntry.dateTimeFormat.format(aml._startTime))
-              .setNamedValue("creation_epoch", aml._startTime, EventLogEntry.epochFormat);
+      aml.eventLog().info(Stage.Workflow, "AutoML job created: " + EventLogEntry.dateTimeFormat.get().format(aml._startTime))
+              .setNamedValue("creation_epoch", aml._startTime, EventLogEntry.epochFormat.get());
       j.start(aml._workAllocations.remainingWork());
       DKV.put(aml);
     }
@@ -372,8 +372,8 @@ public final class AutoML extends Lockable<AutoML> implements TimedH2ORunnable {
   @Override
   public void run() {
     _modelingStepsExecutor.start();
-    eventLog().info(Stage.Workflow, "AutoML build started: " + EventLogEntry.dateTimeFormat.format(_runCountdown.start_time()))
-            .setNamedValue("start_epoch", _runCountdown.start_time(), EventLogEntry.epochFormat);
+    eventLog().info(Stage.Workflow, "AutoML build started: " + EventLogEntry.dateTimeFormat.get().format(_runCountdown.start_time()))
+            .setNamedValue("start_epoch", _runCountdown.start_time(), EventLogEntry.epochFormat.get());
     learn();
     stop();
   }
@@ -382,8 +382,8 @@ public final class AutoML extends Lockable<AutoML> implements TimedH2ORunnable {
   public void stop() {
     if (null == _modelingStepsExecutor) return; // already stopped
     _modelingStepsExecutor.stop();
-    eventLog().info(Stage.Workflow, "AutoML build stopped: " + EventLogEntry.dateTimeFormat.format(_runCountdown.stop_time()))
-            .setNamedValue("stop_epoch", _runCountdown.stop_time(), EventLogEntry.epochFormat);
+    eventLog().info(Stage.Workflow, "AutoML build stopped: " + EventLogEntry.dateTimeFormat.get().format(_runCountdown.stop_time()))
+            .setNamedValue("stop_epoch", _runCountdown.stop_time(), EventLogEntry.epochFormat.get());
     eventLog().info(Stage.Workflow, "AutoML build done: built " + _modelingStepsExecutor.modelCount() + " models");
     eventLog().info(Stage.Workflow, "AutoML duration: "+ PrettyPrint.msecs(_runCountdown.duration(), true))
             .setNamedValue("duration_secs", Math.round(_runCountdown.duration() / 1000.));
@@ -599,12 +599,12 @@ public final class AutoML extends Lockable<AutoML> implements TimedH2ORunnable {
 
   Key<Model> modelKey(String algoName, boolean with_counter) {
     String counterStr = with_counter ? "_" + nextInstanceCounter(algoName, algoInstanceCounters) : "";
-    return Key.make(algoName + counterStr + "_AutoML_" + timestampFormatForKeys.format(_startTime));
+    return Key.make(algoName + counterStr + "_AutoML_" + timestampFormatForKeys.get().format(_startTime));
   }
 
   Key<Grid> gridKey(String algoName, boolean with_counter) {
     String counterStr = with_counter ? "_" + nextInstanceCounter(algoName, gridInstanceCounters) : "";
-    return Key.make(algoName + "_grid_" + counterStr + "_AutoML_" + timestampFormatForKeys.format(_startTime));
+    return Key.make(algoName + "_grid_" + counterStr + "_AutoML_" + timestampFormatForKeys.get().format(_startTime));
   }
 
   void addGridKey(Key<Grid> gridKey) {
