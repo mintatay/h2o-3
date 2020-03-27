@@ -397,7 +397,7 @@ public class XGBoost extends ModelBuilder<XGBoostModel,XGBoostModel.XGBoostParam
         model.unlock(_job);
       }
     }
-
+    
     /**
      * @return True if train dataset is sparse, otherwise false.
      */
