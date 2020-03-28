@@ -27,8 +27,8 @@ public class SegmentModelsBuilder {
   }
 
   public Job<SegmentModels> buildSegmentModels() {
-    if (_parms._parallelism <= 1) {
-      throw new IllegalArgumentException("Parallelism has to be a positive number, received=" + _parms._parallelism);
+    if (_parms._parallelism <= 0) {
+      throw new IllegalArgumentException("Parameter `parallelism` has to be a positive number, received=" + _parms._parallelism);
     }
     final Frame segments;
     if (_parms._segments != null) {
